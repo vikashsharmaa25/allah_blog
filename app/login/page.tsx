@@ -2,24 +2,38 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
 import { Lock, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { userLogin } from '@/apis/auth';
 
 export default function LoginPage() {
-    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const { mutate: login, isPending, isError, error } = useMutation({
+        mutationFn: () =>
+            userLogin({
+                email: formData.email,
+                password: formData.password,
+            }),
+        onSuccess: (data) => {
+            // Handle successful login (e.g., store token, redirect)
+            console.log('Login successful:', data);
+            router.push('/'); // Redirect to home or dashboard
+        },
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
-        // TODO: Implement login logic
+        login();
         console.log('Login attempt with:', formData);
-        setTimeout(() => setIsLoading(false), 1500);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,10 +46,10 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-emerald-50 to-teal-50 p-4">
-            <div className="w-full max-w-md space-y-8">
+            <div className="w-full max-w-md space-y-6">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold text-emerald-800">Welcome Back</h1>
-                    <p className="mt-2 text-gray-600">Sign in to your account to continue</p>
+                    <p className="mt-2 text-gray-600">Sign in to your account</p>
                 </div>
 
                 <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
@@ -50,12 +64,11 @@ export default function LoginPage() {
                                     id="email"
                                     name="email"
                                     type="email"
-                                    autoComplete="email"
-                                    required
-                                    value={formData.email}
-                                    onChange={handleChange}
+                                    placeholder="your@email.com"
                                     className="pl-10"
-                                    placeholder="Enter your email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    required
                                 />
                             </div>
                         </div>
@@ -75,23 +88,28 @@ export default function LoginPage() {
                                     id="password"
                                     name="password"
                                     type="password"
-                                    autoComplete="current-password"
-                                    required
-                                    value={formData.password}
-                                    onChange={handleChange}
+                                    placeholder="••••••••"
                                     className="pl-10"
-                                    placeholder="Enter your password"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    required
                                 />
                             </div>
                         </div>
 
-                        <div>
+                        {isError && (
+                            <div className="text-red-500 text-sm text-center">
+                                {error?.message || 'Invalid email or password'}
+                            </div>
+                        )}
+
+                        <div className="pt-2">
                             <Button
                                 type="submit"
-                                className="w-full bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 h-11"
-                                disabled={isLoading}
+                                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded-md transition-colors"
+                                disabled={isPending}
                             >
-                                {isLoading ? 'Signing in...' : 'Sign In'}
+                                {isPending ? 'Signing in...' : 'Sign In'}
                             </Button>
                         </div>
                     </form>
@@ -107,3 +125,7 @@ export default function LoginPage() {
         </div>
     );
 }
+function setIsLoading(arg0: boolean): void {
+    throw new Error('Function not implemented.');
+}
+

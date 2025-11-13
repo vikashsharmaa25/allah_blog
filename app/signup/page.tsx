@@ -2,31 +2,46 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { User, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
+import { User, Lock, Mail, Eye, EyeOff, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { userRegister } from '@/apis/auth';
 
 export default function SignupPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phoneNumber: '',
     password: '',
     confirmPassword: '',
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const { mutate: signup, isPending, isError, error } = useMutation({
+    mutationFn: () =>
+      userRegister({
+        name: formData.name,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        password: formData.password
+      }),
+    onSuccess: () => {
+      // Redirect to login page after successful signup
+      router.push('/login');
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords don't match!");
       return;
     }
-    setIsLoading(true);
-    // TODO: Implement signup logic
-    console.log('Signup attempt with:', formData);
-    setTimeout(() => setIsLoading(false), 1500);
+    signup();
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,22 +66,39 @@ export default function SignupPage() {
 
         <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-gray-700">Full Name</Label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name" className="text-gray-700">Full Name</Label>
+                <div className="relative mt-1">
+                  <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Input
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder="John Doe"
+                    className="pl-10"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="pl-10"
-                  placeholder="Enter your full name"
-                />
+              </div>
+
+              <div>
+                <Label htmlFor="phoneNumber" className="text-gray-700">Phone Number</Label>
+                <div className="relative mt-1">
+                  <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Input
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    type="tel"
+                    placeholder="+1234567890"
+                    className="pl-10"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
             </div>
 
@@ -142,12 +174,17 @@ export default function SignupPage() {
             </div>
 
             <div className="pt-2">
+              {isError && (
+                <div className="text-red-500 text-sm text-center">
+                  {error?.message || 'An error occurred during signup'}
+                </div>
+              )}
               <Button
                 type="submit"
-                className="w-full bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 h-11"
-                disabled={isLoading}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded-md transition-colors"
+                disabled={isPending}
               >
-                {isLoading ? 'Creating Account...' : 'Create Account'}
+                {isPending ? 'Creating Account...' : 'Sign Up'}
               </Button>
             </div>
           </form>
