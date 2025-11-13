@@ -13,7 +13,7 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-linear-to-r from-emerald-600 to-teal-600 text-white shadow-lg sticky top-0 z-50">
+    <header className="bg-linear-to-r from-[#1E3A8A] to-[#2B528F] text-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center space-x-3">
@@ -53,7 +53,7 @@ export default function Header() {
             </a>
             <a
               href="/login"
-              className="bg-white text-emerald-700 px-6 py-2 rounded-full font-medium hover:bg-emerald-50 transition"
+              className="bg-white text-[#2B528F] px-6 py-2 rounded-full font-medium hover:bg-[#2B528F] transition"
             >
               Sign In
             </a>
@@ -70,41 +70,41 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {mobileMenu && (
-          <div className="md:hidden bg-emerald-700 rounded-lg p-4 mt-2 mb-4">
+          <div className="md:hidden bg-[#2B528F] rounded-lg p-4 mt-2 mb-4">
             <div className="flex flex-col space-y-3">
               <a
                 href="#"
-                className="block py-2 hover:bg-emerald-600 px-3 rounded transition"
+                className="block py-2 hover:bg-[#2B528F] px-3 rounded transition"
               >
                 Home
               </a>
               <a
                 href="#"
-                className="block py-2 hover:bg-emerald-600 px-3 rounded transition"
+                className="block py-2 hover:bg-[#2B528F] px-3 rounded transition"
               >
                 Articles
               </a>
               <a
                 href="#"
-                className="block py-2 hover:bg-emerald-600 px-3 rounded transition"
+                className="block py-2 hover:bg-[#2B528F] px-3 rounded transition"
               >
                 Quran
               </a>
               <a
                 href="#"
-                className="block py-2 hover:bg-emerald-600 px-3 rounded transition"
+                className="block py-2 hover:bg-[#2B528F] px-3 rounded transition"
               >
                 Hadith
               </a>
               <a
                 href="#"
-                className="block py-2 hover:bg-emerald-600 px-3 rounded transition"
+                className="block py-2 hover:bg-[#2B528F] px-3 rounded transition"
               >
                 About
               </a>
               <a
                 href="/login"
-                className="block text-center bg-white text-emerald-700 px-4 py-2 rounded-full font-medium mt-2 hover:bg-emerald-50 transition"
+                className="block text-center bg-white text-[#2B528F] px-4 py-2 rounded-full font-medium mt-2 hover:bg-[#2B528F] transition"
               >
                 Sign In
               </a>

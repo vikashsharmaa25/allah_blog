@@ -4,7 +4,7 @@ import Header from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { FeaturedPosts } from '@/components/home/FeaturedPosts';
 import { NewsletterSection } from '@/components/home/NewsletterSection';
-import { HeroSection } from '@/components/home/HeroSection';
+import HeroSection from '@/components/home/HeroSection';
 
 // Static Blog Data
 const blogPosts = [
