@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Moon, Sun, Menu, X } from "lucide-react";
-import Link from "next/link";
 
-export const Header = () => {
+export default function Header() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     document.documentElement.classList.toggle("dark");
@@ -51,23 +51,21 @@ export const Header = () => {
             <a href="#" className="hover:text-emerald-200 transition">
               About
             </a>
-            <Link
+            <a
               href="/login"
-              className="w-full bg-white text-emerald-700 px-4 py-2 rounded-full font-medium mt-2"
+              className="bg-white text-emerald-700 px-6 py-2 rounded-full font-medium hover:bg-emerald-50 transition"
             >
               Sign In
-            </Link>
+            </a>
           </nav>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setMobileMenu(!mobileMenu)}
-              className="text-white"
-            >
-              {mobileMenu ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+          <button
+            onClick={() => setMobileMenu(!mobileMenu)}
+            className="md:hidden text-white hover:bg-emerald-700 p-2 rounded-lg transition"
+          >
+            {mobileMenu ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
 
         {/* Mobile Menu */}
@@ -76,44 +74,44 @@ export const Header = () => {
             <div className="flex flex-col space-y-3">
               <a
                 href="#"
-                className="block py-2 hover:bg-emerald-600 px-2 rounded"
+                className="block py-2 hover:bg-emerald-600 px-3 rounded transition"
               >
                 Home
               </a>
               <a
                 href="#"
-                className="block py-2 hover:bg-emerald-600 px-2 rounded"
+                className="block py-2 hover:bg-emerald-600 px-3 rounded transition"
               >
                 Articles
               </a>
               <a
                 href="#"
-                className="block py-2 hover:bg-emerald-600 px-2 rounded"
+                className="block py-2 hover:bg-emerald-600 px-3 rounded transition"
               >
                 Quran
               </a>
               <a
                 href="#"
-                className="block py-2 hover:bg-emerald-600 px-2 rounded"
+                className="block py-2 hover:bg-emerald-600 px-3 rounded transition"
               >
                 Hadith
               </a>
               <a
                 href="#"
-                className="block py-2 hover:bg-emerald-600 px-2 rounded"
+                className="block py-2 hover:bg-emerald-600 px-3 rounded transition"
               >
                 About
               </a>
-              <Link
+              <a
                 href="/login"
-                className="w-full bg-white text-emerald-700 px-4 py-2 rounded-full font-medium mt-2"
+                className="block text-center bg-white text-emerald-700 px-4 py-2 rounded-full font-medium mt-2 hover:bg-emerald-50 transition"
               >
                 Sign In
-              </Link>
+              </a>
             </div>
           </div>
         )}
       </div>
     </header>
   );
-};
+}
