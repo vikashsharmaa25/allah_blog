@@ -1,7 +1,7 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import Header from "@/components/layout/Header";
 
 const blogPosts = [
     {
