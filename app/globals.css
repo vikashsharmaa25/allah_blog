@@ -94,6 +94,8 @@
   --tg-fw-medium: 500;
   --tg-fw-regular: 400;
   --tg-fw-light: 300;
+
+  --main-background: #101828;
 }
 
 .dark {
@@ -128,6 +130,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --main-background: #101828;
 }
 
 body {
@@ -136,7 +139,7 @@ body {
   font-weight: var(--tg-fw-regular);
   color: var(--tg-body-color);
   line-height: var(--tg-body-line-height);
-  background: var(--tg-common-color-white);
+  background-color: var(--main-background);
 }
 
 h1,
@@ -146,7 +149,7 @@ h4,
 h5,
 h6 {
   font-family: var(--tg-heading-font-family) !important;
-  color: var(--tg-common-color-black) !important;
+  /* color: #fff !important; */
   font-weight: var(--tg-fw-semi-bold);
   line-height: var(--tg-heading-line-height) !important;
 }

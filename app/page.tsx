@@ -93,12 +93,12 @@ const categories = ["All", "Ramadan", "Ibadat", "Quran", "Hajj", "Fiqh", "Seerah
 // Main Page Component
 export default function Home() {
   return (
-    <div className="flex flex-col bg-white">
+    <div className="flex flex-col">
       <Header />
       <main className="grow">
         <HeroSection />
         <FeaturedPosts posts={blogPosts} categories={categories} />
-        <NewsletterSection />
+        {/* <NewsletterSection /> */}
       </main>
       <Footer />
     </div>

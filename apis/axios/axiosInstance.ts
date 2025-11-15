@@ -1,11 +1,12 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
+// https://yaallah-1.onrender.com/api/auth/login
+// https://springboot-with-postgres.onrender.com/api/auth/login
 const axiosInstance: AxiosInstance = axios.create({
-    baseURL: 'https://springboot-with-postgres.onrender.com/api',
+    baseURL: 'https://yaallah-1.onrender.com/api',
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 10000, // 10 seconds
 });
 
 // Request interceptor

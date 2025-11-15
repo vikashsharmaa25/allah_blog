@@ -1,33 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export default function Header() {
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.documentElement.classList.toggle("dark");
-  };
 
   return (
-    <header className="bg-linear-to-r from-[#1E3A8A] to-[#2B528F] text-white shadow-lg sticky top-0 z-50">
+    <header className="text-white shadow-lg sticky top-0 z-50 bg-[#101828]">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center space-x-3">
-            {/* {darkMode ? (
-              <Sun
-                className="w-8 h-8 cursor-pointer"
-                onClick={toggleDarkMode}
-              />
-            ) : (
-              <Moon
-                className="w-8 h-8 cursor-pointer"
-                onClick={toggleDarkMode}
-              />
-            )} */}
             <div>
               <h1 className="text-2xl font-bold">yaALLAH.in</h1>
               <p className="text-xs opacity-80">Knowledge & Guidance</p>
@@ -53,7 +36,7 @@ export default function Header() {
             </a>
             <a
               href="/login"
-              className="bg-white text-[#2B528F] px-6 py-2 rounded-full font-medium hover:bg-[#2B528F] transition"
+              className="border border-amber-500/90 text-amber-500/90 px-6 py-2 rounded-full font-medium hover:bg-amber-500/90 hover:text-white transition"
             >
               Sign In
             </a>
@@ -70,7 +53,7 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {mobileMenu && (
-          <div className="md:hidden bg-[#2B528F] rounded-lg p-4 mt-2 mb-4">
+          <div className="md:hidden bg-[#101828] rounded-lg p-4 mt-2 mb-4">
             <div className="flex flex-col space-y-3">
               <a
                 href="#"
@@ -104,7 +87,7 @@ export default function Header() {
               </a>
               <a
                 href="/login"
-                className="block text-center bg-white text-[#2B528F] px-4 py-2 rounded-full font-medium mt-2 hover:bg-[#2B528F] transition"
+                className="block text-center px-4 py-2 rounded-full font-medium mt-2 border border-amber-500/90 text-amber-500/90 transition"
               >
                 Sign In
               </a>
