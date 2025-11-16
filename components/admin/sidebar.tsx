@@ -21,21 +21,6 @@ const menuItems: MenuItem[] = [
         href: '/admin/blog',
         icon: FileText,
     },
-    {
-        name: 'Categories',
-        href: '/admin/categories',
-        icon: BookOpen,
-    },
-    {
-        name: 'Users',
-        href: '/admin/users',
-        icon: Users,
-    },
-    {
-        name: 'Settings',
-        href: '/admin/settings',
-        icon: Settings,
-    },
 ];
 
 export function Sidebar() {

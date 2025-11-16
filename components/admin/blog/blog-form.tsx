@@ -14,28 +14,25 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
     title: z.string().min(2, {
         message: 'Title must be at least 2 characters.',
     }),
-    slug: z.string().min(2, {
-        message: 'Slug must be at least 2 characters.',
-    }),
     content: z.string().min(10, {
         message: 'Content must be at least 10 characters.',
     }),
-    status: z.enum(['draft', 'published', 'archived']),
-    excerpt: z.string().optional(),
-    featuredImage: z.string().optional(),
+    featuredImage: z.any()
+        .refine((files) => files?.length >= 1, 'Image is required')
+        .refine((files) => {
+            if (!files?.[0]) return true;
+            return files[0]?.size <= 5000000;
+        }, 'Max file size is 5MB')
+        .refine((files) => {
+            if (!files?.[0]) return true;
+            return ['image/jpeg', 'image/png', 'image/webp'].includes(files[0]?.type);
+        }, 'Only .jpg, .png, and .webp formats are supported')
 });
 
 type BlogFormValues = z.infer<typeof formSchema>;
@@ -57,10 +54,7 @@ export function BlogForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: '',
-            slug: '',
             content: '',
-            status: 'draft',
-            excerpt: '',
             featuredImage: '',
             ...defaultValues,
         },
@@ -69,81 +63,17 @@ export function BlogForm({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Title</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Enter blog title" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="slug"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Slug</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="blog-post-slug" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="status"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Status</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a status" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="draft">Draft</SelectItem>
-                                        <SelectItem value="published">Published</SelectItem>
-                                        <SelectItem value="archived">Archived</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="featuredImage"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Featured Image URL</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="https://example.com/image.jpg" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
                 <FormField
                     control={form.control}
-                    name="excerpt"
+                    name="title"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Excerpt</FormLabel>
+                            <FormLabel>Title</FormLabel>
                             <FormControl>
-                                <Textarea
-                                    placeholder="A brief description of your blog post"
-                                    className="min-h-[100px]"
+                                <Input
+                                    placeholder="Enter blog title"
                                     {...field}
+                                    disabled={isSubmitting}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -159,8 +89,9 @@ export function BlogForm({
                             <FormLabel>Content</FormLabel>
                             <FormControl>
                                 <Textarea
-                                    placeholder="Write your blog post here..."
-                                    className="min-h-[300px]"
+                                    placeholder="Write your blog post content here..."
+                                    className="min-h-[200px]"
+                                    disabled={isSubmitting}
                                     {...field}
                                 />
                             </FormControl>
@@ -169,22 +100,40 @@ export function BlogForm({
                     )}
                 />
 
-                <div className="flex justify-end space-x-4">
-                    <Button type="button" variant="outline" disabled={isSubmitting}>
-                        Cancel
+                <FormField
+                    control={form.control}
+                    name="featuredImage"
+                    render={({ field: { value, onChange, ...field } }) => (
+                        <FormItem>
+                            <FormLabel>Featured Image</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    disabled={isSubmitting}
+                                    onChange={(e) => {
+                                        onChange(e.target.files);
+                                    }}
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <div className="flex justify-end space-x-4 pt-4">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => form.reset()}
+                        disabled={isSubmitting}
+                    >
+                        Reset
                     </Button>
                     <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                {isEditing ? 'Updating...' : 'Creating...'}
-                            </>
-                        ) : (
-                            <>
-                                <Save className="mr-2 h-4 w-4" />
-                                {isEditing ? 'Update Post' : 'Create Post'}
-                            </>
-                        )}
+                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isSubmitting ? 'Saving...' : 'Save Post'}
                     </Button>
                 </div>
             </form>

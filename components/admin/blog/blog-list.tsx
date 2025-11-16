@@ -4,47 +4,18 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search } from 'lucide-react';
+import { createPost } from '@/apis/all-apis';
 import { BlogTable } from './blog-table';
 import { BlogForm } from './blog-form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-type Blog = {
-  id: string;
-  title: string;
-  slug: string;
-  status: 'published' | 'draft' | 'archived';
-  publishedAt: string;
-  author: string;
-  views: number;
-};
-
-export function BlogList() {
+export function BlogList({ posts }: { posts: any[] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
+  const [editingBlog, setEditingBlog] = useState<any | null>(null);
 
   // Mock data - replace with actual data fetching
-  const [blogs, setBlogs] = useState<Blog[]>([
-    {
-      id: '1',
-      title: 'Getting Started with Next.js',
-      slug: 'getting-started-with-nextjs',
-      status: 'published',
-      publishedAt: '2023-11-01',
-      author: 'John Doe',
-      views: 1245,
-    },
-    {
-      id: '2',
-      title: 'React Hooks Guide',
-      slug: 'react-hooks-guide',
-      status: 'draft',
-      publishedAt: '2023-11-05',
-      author: 'Jane Smith',
-      views: 0,
-    },
-  ]);
-
+  const blogs = posts;
   const filteredBlogs = blogs.filter(blog =>
     blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     blog.slug.toLowerCase().includes(searchQuery.toLowerCase())
@@ -60,7 +31,7 @@ export function BlogList() {
 
   const handleDelete = (id: string) => {
     if (confirm('Are you sure you want to delete this blog post?')) {
-      setBlogs(blogs.filter(blog => blog.id !== id));
+      // setBlogs(blogs.filter(blog => blog.id !== id));
     }
   };
 
@@ -69,26 +40,45 @@ export function BlogList() {
     console.log('View blog:', id);
   };
 
-  const handleSubmit = (values: any) => {
-    if (editingBlog) {
-      // Update existing blog
-      setBlogs(blogs.map(blog => 
-        blog.id === editingBlog.id 
-          ? { ...blog, ...values, updatedAt: new Date().toISOString() }
-          : blog
-      ));
-    } else {
-      // Create new blog
-      const newBlog = {
-        id: Math.random().toString(36).substr(2, 9),
-        ...values,
-        author: 'Current User', // Replace with actual user
-        publishedAt: new Date().toISOString(),
-        views: 0,
-      };
-      setBlogs([...blogs, newBlog]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (values: any) => {
+    try {
+      setIsSubmitting(true);
+
+      if (editingBlog) {
+        // Handle update logic here if needed
+        // await updatePost({ ...values, id: editingBlog.id });
+      } else {
+        const formData = new FormData();
+        formData.append('title', values.title);
+        formData.append('content', values.content);
+
+        if (values.featuredImage && values.featuredImage.length > 0) {
+          formData.append('image', values.featuredImage[0]);
+        }
+
+        await createPost({
+          title: values.title,
+          content: values.content,
+          image: values.featuredImage[0]
+        });
+
+        window.location.reload();
+      }
+
+      setIsFormOpen(false);
+      setEditingBlog(null);
+    } catch (error) {
+      console.error('Error submitting blog post:', error);
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsFormOpen(false);
+  };
+
+
+  const handleCreate = () => {
+    setIsFormOpen(true);
     setEditingBlog(null);
   };
 
@@ -107,21 +97,18 @@ export function BlogList() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button onClick={() => {
-            setEditingBlog(null);
-            setIsFormOpen(true);
-          }}>
+          <Button onClick={handleCreate}>
             <Plus className="mr-2 h-4 w-4" />
             New Post
           </Button>
         </div>
       </div>
 
-      <BlogTable 
-        blogs={filteredBlogs} 
-        onEdit={handleEdit} 
-        onDelete={handleDelete} 
-        onView={handleView} 
+      <BlogTable
+        blogs={filteredBlogs}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onView={handleView}
       />
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
@@ -132,7 +119,7 @@ export function BlogList() {
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <BlogForm 
+            <BlogForm
               defaultValues={editingBlog || undefined}
               onSubmit={handleSubmit}
               isEditing={!!editingBlog}

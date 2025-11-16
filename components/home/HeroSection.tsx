@@ -7,7 +7,6 @@ import Background from "@/public/assets/background.jpg"
 
 export default function HeroSection() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState('All');
 
   return (
     <section className="relative flex items-center justify-center overflow-hidden">
@@ -21,7 +20,7 @@ export default function HeroSection() {
             className="w-full h-full object-fill"
           />
           {/* Dark overlay for better text readability */}
-          <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/50 to-black/70"></div>
+          {/* <div className="absolute inset-0 bg-linear-to-b from-black/20 via-black/20 to-black/20"></div> */}
         </div>
       </div>
       {/* Main Content */}

@@ -23,7 +23,7 @@ export const FeaturedPosts = ({ posts, categories }: FeaturedPostsProps) => {
   };
 
   return (
-    <section className="relative py-12 bg-gray-900 min-h-screen overflow-hidden">
+    <section className="relative py-12 min-h-screen overflow-hidden">
       {/* Decorative Moon Icons - Left Side */}
       <div className="absolute left-4 md:left-8 top-1/3 space-y-3 z-10">
         <div className="w-3 h-3 rounded-full border border-yellow-600"></div>
