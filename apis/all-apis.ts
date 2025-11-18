@@ -33,3 +33,9 @@ export const deletePost = async (id: string) => {
     const res = await axiosInstance.delete("/admin/posts/" + id)
     return res.data;
 }
+
+//  profile apis
+export const getProfileData = async () => {
+    const res = await axiosInstance.get("/profile/me")
+    return res.data;
+}

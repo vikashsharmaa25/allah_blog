@@ -5,31 +5,61 @@ import { Lock, Mail } from 'lucide-react';
 import Link from 'next/link';
 import LoginLottie from "@/public/assets/login.json";
 import LottiePlayer from '@/components/ui/LottiePlayer';
+import axiosInstance from '@/apis/axios/axiosInstance';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 export default function LoginPage() {
+    const router = useRouter();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        remember: false
     });
     const [isPending, setIsPending] = useState(false);
     const [isError, setIsError] = useState(false);
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
         setIsPending(true);
         setIsError(false);
 
-        // Simulate API call
-        setTimeout(() => {
+        try {
+            const res = await axiosInstance.post("/auth/login", formData);
+
+            if (res && res.token) {
+                const token = res.token;
+                Cookies.set("token", token, { expires: 7 });
+                localStorage.setItem("token", token);
+
+                axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+                try {
+                    const profileResponse = await axiosInstance.get("/profile/me");
+                    console.log(profileResponse);
+                    if (profileResponse) {
+                        localStorage.setItem("user", JSON.stringify(profileResponse));
+                    }
+
+                    router.push("/");
+                    router.refresh();
+                } catch (profileError) {
+                    console.error('Error fetching profile:', profileError);
+                    router.push("/");
+                    router.refresh();
+                }
+            } else {
+                throw new Error('Invalid response from server');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            setIsError(true);
+        } finally {
             setIsPending(false);
-            console.log('Login attempt with:', formData);
-        }, 1000);
+        }
     };
 
     return (
         <div className="min-h-screen flex">
-            {/* Left Side - Image/Branding */}
             <div className="hidden bg-gray-100 lg:flex lg:w-1/2 relative overflow-hidden p-12">
                 <LottiePlayer
                     animationData={LoginLottie}
@@ -43,10 +73,8 @@ export default function LoginPage() {
                 />
             </div>
 
-            {/* Right Side - Login Form */}
             <div className="w-full lg:w-1/2 flex items-center justify-center bg-white p-8">
                 <div className="w-full max-w-md">
-                    {/* Mobile Logo */}
                     <div className="lg:hidden text-center mb-8">
                         <div className="w-16 h-16 bg-yellow-600 rounded-xl flex items-center justify-center mx-auto mb-4">
                             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,20 +140,6 @@ export default function LoginPage() {
                                 Invalid email or password. Please try again.
                             </div>
                         )}
-
-                        <div className="flex items-center">
-                            <input
-                                id="remember"
-                                name="remember"
-                                type="checkbox"
-                                className="h-4 w-4 text-yellow-600 focus:ring-yellow-600 border-gray-300 rounded"
-                                checked={formData.remember}
-                                onChange={(e) => setFormData({ ...formData, remember: e.target.checked })}
-                            />
-                            <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
-                                Remember me for 30 days
-                            </label>
-                        </div>
 
                         <button
                             onClick={handleSubmit}

@@ -5,42 +5,38 @@ import { User, Lock, Mail, Eye, EyeOff, Phone } from 'lucide-react';
 import SignupLottie from "@/public/assets/signup.json"
 import LottiePlayer from '@/components/ui/LottiePlayer';
 import Link from 'next/link';
+import axiosInstance from '@/apis/axios/axiosInstance';
+import { useRouter } from 'next/navigation';
 
 export default function SignupPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phoneNumber: '',
     password: '',
-    confirmPassword: '',
+    // userType: 'user',
   });
   const [isPending, setIsPending] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [passwordError, setPasswordError] = useState('');
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setPasswordError('');
-
-    if (formData.password !== formData.confirmPassword) {
-      setPasswordError("Passwords don't match!");
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      setPasswordError("Password must be at least 8 characters");
-      return;
-    }
 
     setIsPending(true);
     setIsError(false);
 
-    // Simulate API call
-    setTimeout(() => {
+    const res = await axiosInstance.post("/auth/register", formData);
+
+    if (res) {
       setIsPending(false);
-      console.log('Signup attempt with:', formData);
-    }, 1000);
+      setIsError(false);
+      router.push("/login");
+    } else {
+      setIsPending(false);
+      setIsError(true);
+    }
   };
 
   const togglePasswordVisibility = () => {
