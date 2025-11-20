@@ -1,40 +1,22 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, User, LogOut, Home, BookOpen, BookMarked, Info, ChevronDown, UserCircle, Settings, HelpCircle } from "lucide-react";
+import { Menu, X, User, LogOut, Home, BookOpen, BookMarked, Info, ChevronDown, UserCircle, Settings, HelpCircle, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/providers/AuthContext";
 
 export default function Header() {
   const [mobileMenu, setMobileMenu] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
-
-  // 🔥 Load user from localStorage
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
-
-    if (storedUser && token) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-      setUser(null);
-    }
-  }, []);
+  const { user, isLoggedIn, logout, isLoading } = useAuth();
 
   // 🔥 Logout handler
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setUser(null);
+    logout();
     setShowDropdown(false);
     router.push("/");
     router.refresh();
@@ -56,12 +38,12 @@ export default function Header() {
 
   return (
     <header className="text-white shadow-lg sticky top-0 z-50 bg-[#101828]">
-      <div className="container mx-auto px-4">
+      <div className="px-4">
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center space-x-3">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex flex-col items-center">
               <h1 className="text-2xl font-bold">yaALLAH.in</h1>
-              <p className="text-xs opacity-80 ml-2 hidden sm:inline">Knowledge & Guidance</p>
+              <p className="text-xs opacity-80 mt-1 hidden sm:inline">Knowledge & Guidance</p>
             </Link>
           </div>
 
@@ -82,30 +64,16 @@ export default function Header() {
               <span>Quran</span>
             </Link>
 
-            <Link href="/hadith" className={`flex items-center space-x-1 hover:text-emerald-200 transition ${pathname === "/hadith" ? "text-emerald-400" : ""}`}>
-              <BookMarked size={18} />
-              <span>Hadith</span>
-            </Link>
-
             <Link href="/about" className={`flex items-center space-x-1 hover:text-emerald-200 transition ${pathname === "/about" ? "text-emerald-400" : ""}`}>
               <Info size={18} />
               <span>About</span>
             </Link>
 
-            {isLoggedIn ? (
+            {/* Show loading skeleton or nothing while checking auth state */}
+            {isLoading ? (
+              <div className="w-20 h-10 bg-gray-700 rounded-full animate-pulse"></div>
+            ) : user && isLoggedIn ? (
               <div className="flex items-center space-x-4">
-
-                {/* 🔥 Show Dashboard only for ADMIN */}
-                {user?.userType === "ADMIN" && (
-                  <Link
-                    href="/admin"
-                    className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-full transition"
-                  >
-                    <User size={18} />
-                    <span>Dashboard</span>
-                  </Link>
-                )}
-
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setShowDropdown(!showDropdown)}
@@ -124,6 +92,15 @@ export default function Header() {
                         <p className="text-sm font-medium text-gray-900 truncate">{user?.name || 'User'}</p>
                         <p className="text-xs text-gray-500 truncate">{user?.email || ''}</p>
                       </div>
+                      {user?.userType === "ADMIN" && (
+                        <Link
+                          href="/admin"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <LayoutDashboard size={18} />
+                          <span>Dashboard</span>
+                        </Link>
+                      )}
                       <Link
                         href="/profile"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -222,7 +199,7 @@ export default function Header() {
               </Link>
 
               {/* 🔥 Admin Dashboard only for ADMIN */}
-              {isLoggedIn && user?.userType === "ADMIN" && (
+              {!isLoading && isLoggedIn && user?.userType === "ADMIN" && (
                 <Link
                   href="/admin"
                   className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-full transition justify-center"
@@ -233,25 +210,29 @@ export default function Header() {
                 </Link>
               )}
 
-              {isLoggedIn ? (
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setMobileMenu(false);
-                  }}
-                  className="flex items-center space-x-2 text-amber-400 hover:text-amber-300 transition justify-center py-2"
-                >
-                  <LogOut size={18} />
-                  <span>Logout</span>
-                </button>
+              {!isLoading ? (
+                isLoggedIn ? (
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMobileMenu(false);
+                    }}
+                    className="flex items-center space-x-2 text-amber-400 hover:text-amber-300 transition justify-center py-2"
+                  >
+                    <LogOut size={18} />
+                    <span>Logout</span>
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="flex items-center justify-center space-x-2 border border-amber-500/90 text-amber-500/90 px-4 py-2 rounded-full font-medium hover:bg-amber-500/90 hover:text-white transition"
+                    onClick={() => setMobileMenu(false)}
+                  >
+                    <span>Sign In</span>
+                  </Link>
+                )
               ) : (
-                <Link
-                  href="/login"
-                  className="flex items-center justify-center space-x-2 border border-amber-500/90 text-amber-500/90 px-4 py-2 rounded-full font-medium hover:bg-amber-500/90 hover:text-white transition"
-                  onClick={() => setMobileMenu(false)}
-                >
-                  <span>Sign In</span>
-                </Link>
+                <div className="w-full h-10 bg-gray-700 rounded-full animate-pulse"></div>
               )}
             </div>
           </div>

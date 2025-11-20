@@ -14,28 +14,21 @@ export function BlogList({ posts }: { posts: any[] }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<any | null>(null);
 
-  // Mock data - replace with actual data fetching
-  const blogs = posts;
-  const filteredBlogs = blogs.filter(blog =>
-    blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    blog.slug.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleEdit = (id: string) => {
-    const blogToEdit = blogs.find(blog => blog.id === id);
-    if (blogToEdit) {
-      setEditingBlog(blogToEdit);
+  const handleEdit = (blog: any) => {
+    if (blog) {
+      setEditingBlog(blog);
       setIsFormOpen(true);
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     if (confirm('Are you sure you want to delete this blog post?')) {
       // setBlogs(blogs.filter(blog => blog.id !== id));
+      console.log('Delete blog:', id);
     }
   };
 
-  const handleView = (id: string) => {
+  const handleView = (id: number) => {
     // Navigate to blog post
     console.log('View blog:', id);
   };
@@ -64,7 +57,7 @@ export function BlogList({ posts }: { posts: any[] }) {
           image: values.featuredImage[0]
         });
 
-        window.location.reload();
+        // window.location.reload();
       }
 
       setIsFormOpen(false);
@@ -105,7 +98,7 @@ export function BlogList({ posts }: { posts: any[] }) {
       </div>
 
       <BlogTable
-        blogs={filteredBlogs}
+        blogs={posts}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onView={handleView}

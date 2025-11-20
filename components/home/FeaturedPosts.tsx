@@ -6,16 +6,11 @@ import { BlogPostCard } from './BlogPostCard';
 
 interface FeaturedPostsProps {
   posts: BlogPost[];
-  categories: string[];
 }
 
-export const FeaturedPosts = ({ posts, categories }: FeaturedPostsProps) => {
+export const FeaturedPosts = ({ posts }: FeaturedPostsProps) => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [email, setEmail] = useState('');
-
-  const filteredPosts = activeCategory === 'All'
-    ? posts
-    : posts.filter(post => post.category === activeCategory);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,23 +36,6 @@ export const FeaturedPosts = ({ posts, categories }: FeaturedPostsProps) => {
       </div>
 
       <div className="container mx-auto px-4 max-w-7xl">
-
-        {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === category
-                ? 'bg-yellow-600 text-white'
-                : 'bg-transparent text-gray-300 border border-gray-600 hover:border-yellow-600'
-                }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-
         {/* Title */}
         <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-10">
           Latest Articles
@@ -65,8 +43,8 @@ export const FeaturedPosts = ({ posts, categories }: FeaturedPostsProps) => {
 
         {/* Blog Posts Grid - All Posts */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
-          {filteredPosts.map((post) => (
-            <BlogPostCard key={post.id} post={post} />
+          {posts?.map((post) => (
+            <BlogPostCard key={post?.id} post={post} />
           ))}
         </div>
 

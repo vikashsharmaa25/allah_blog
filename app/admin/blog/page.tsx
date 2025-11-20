@@ -1,21 +1,20 @@
 'use client';
 
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { BlogList } from '@/components/admin/blog/blog-list';
 import { getAllPost } from '@/apis/all-apis';
 
 export default function BlogPage() {
-  const [posts, setPosts] = React.useState([]);
+  const [posts, setPosts] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchPosts = async () => {
       const res = await getAllPost();
+      console.log("Admin posts response:", res);
       setPosts(res);
     };
     fetchPosts();
   }, []);
-
-  console.log(posts);
 
   return (
     <div className="container py-6">

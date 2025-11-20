@@ -3,7 +3,7 @@ import axios, { AxiosInstance } from 'axios';
 // https://yaallah-1.onrender.com/api/auth/login
 // https://springboot-with-postgres.onrender.com/api/auth/login
 const axiosInstance: any = axios.create({
-    baseURL: 'https://yaallah-1.onrender.com/api',
+    baseURL: 'https://yaallah-az3m.onrender.com/api',
     headers: {
         'Content-Type': 'application/json',
     },

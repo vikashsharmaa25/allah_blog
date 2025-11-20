@@ -2,8 +2,8 @@ import axiosInstance from "./axios/axiosInstance";
 
 // admin apis
 export const getAllPost = async () => {
-    const res = await axiosInstance.get("/admin/posts")
-    return res.data;
+    const res = await axiosInstance.get("/posts")
+    return res;
 }
 
 export const createPost = async (postData: {

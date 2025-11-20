@@ -1,6 +1,6 @@
 'use client'
 
-import { Heart, Share2, MessageCircle, Book, Compass, Users } from 'lucide-react';
+import { Compass } from 'lucide-react';
 
 export const Footer = () => {
   return (
@@ -54,21 +54,6 @@ export const Footer = () => {
               <li><a href="#" className="text-gray-400 hover:text-white transition">Hajj & Umrah</a></li>
               <li><a href="#" className="text-gray-400 hover:text-white transition">Fiqh</a></li>
             </ul>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Newsletter</h4>
-            <p className="text-gray-400 mb-4">Subscribe to our newsletter for the latest updates.</p>
-            <div className="flex">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="bg-gray-800 text-white px-4 py-2 rounded-l-md focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full"
-              />
-              <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-r-md transition">
-                Subscribe
-              </button>
-            </div>
           </div>
         </div>
 

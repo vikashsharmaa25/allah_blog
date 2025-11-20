@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
+import { AuthProvider } from "@/providers/AuthContext";
 import { ReactNode } from "react";
 
 const geistSans = Geist({
@@ -31,7 +32,9 @@ export default function RootLayout({
         cz-shortcut-listen="true"
       >
         <QueryProvider>
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>
